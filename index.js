@@ -14,7 +14,7 @@ const app=express();
 app.use(bodyParser.json({ limit: '50mb' })); //increase the limit of uploading data using body-parser
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(express.json());
-app.use(cors());
+app.use(cors()); 
 
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -26,8 +26,8 @@ let PORT=process.env.PORT || 3001;
 
 let db;
 const connectDb=async()=>{
-    let client=await MongoClient.connect("mongodb://localhost:27017/dribble");
-    db=client.db();
+    let client=await MongoClient.connect(process.env.MONGO_URI);
+    db=client.db("dribble"); //database name
 }
 connectDb();
 
@@ -174,6 +174,11 @@ app.post('/users/exists',async(req,res)=>{
     else{
         res.status(400).json({userExists:true});
     }
+})
+
+app.get('/users/',validUser,async(req,res)=>{
+    const allUsers= await db.collection('users').find().toArray();
+    res.status(200).json({"users":allUsers});
 })
 
 
