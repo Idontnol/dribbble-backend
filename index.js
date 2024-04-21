@@ -181,6 +181,52 @@ app.get('/users/',validUser,async(req,res)=>{
     res.status(200).json({"users":allUsers});
 })
 
+app.get('/getdata/:userQuery',async(req,res)=>{
+    const userQuery = req.params.userQuery;
+    console.log(userQuery);
+    const clients_id="MoMBkj4oXIL2za6kWwh4U3hT2RR_hNXfue0WO4qLjwY";
+    const results= await fetch(`https://api.unsplash.com/search/photos?page=1&per_page=10&query=${userQuery}&client_id=${clients_id}`);
+    const data=await results.json();
+    console.log(data);
+    const formattedData = data.results.map(result => ({
+        url: result.urls.small,
+        description: result.alt_description,
+        likes: result.likes,
+        creatorId: result.user?.id,
+        creatorName: result.user?.username,
+        creatorImage: result.user?.profile_image?.small, // Use small size for efficiency
+      }));
+    console.log(formattedData);
+
+    res.status(200).json(formattedData);
+})
+
+app.get('/users/verification/:userId',async(req,res)=>{
+    const userId = req.params.userId;
+    try {
+        // Find user by ID using Mongoose
+        const userData = await db.collection('users').findOne({ _id: new mongoose.Types.ObjectId(userId) });
+
+        if (userData) {
+            userData.emailVerified = true;
+            await userData.save();
+
+            console.log('backend', userData);
+
+            res.status(200).json({ msg: 'success' });
+        } else {
+        
+            res.status(404).json({ msg: 'User not found' });
+        }
+    } catch (error) {
+        console.error(error); 
+        res.status(500).send({ msg: 'Internal server error' });
+    }
+})
+
+app.get('/hi',async(req,res)=>{
+    res.json({'msg':'back'});
+})
 
 app.listen(PORT,(req,res)=>{
     console.log('listening at '+PORT);
