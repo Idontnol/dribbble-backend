@@ -220,7 +220,7 @@ app.get('/users/verification/:userId',async(req,res)=>{
         }
     } catch (error) {
         console.error(error); 
-        res.status(500).json({ msg: 'Internal server error' ,userId,userData: userData});
+        res.status(404).json({ msg: 'Internal server error' ,userId,error,mess:error.message });
     }
 })
 
