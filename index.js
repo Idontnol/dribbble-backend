@@ -213,14 +213,14 @@ app.get('/users/verification/:userId',async(req,res)=>{
 
             console.log('backend', userData);
 
-            res.status(200).json({ msg: 'success' });
+            res.status(200).json({ msg: 'success' ,userId,userData: userData});
         } else {
         
-            res.status(404).json({ msg: 'User not found' });
+            res.status(404).json({ msg: 'User not found',userId,userData: userData });
         }
     } catch (error) {
         console.error(error); 
-        res.status(500).send({ msg: 'Internal server error' });
+        res.status(500).json({ msg: 'Internal server error' ,userId,userData: userData});
     }
 })
 
