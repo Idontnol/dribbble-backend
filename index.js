@@ -209,7 +209,7 @@ app.get('/users/verification/:userId',async(req,res)=>{
 
         if (userData) {
             userData.emailVerified = true;
-            await UserModel.updateOne({ _id: userId }, { $set: { emailVerified: true } });
+            await db.collection('users').updateOne({ _id: userId }, { $set: { emailVerified: true } });
             console.log('backend', userData);
 
             res.status(200).json({ msg: 'success' ,userId,userData: userData});
